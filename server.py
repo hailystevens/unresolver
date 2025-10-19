@@ -29,13 +29,14 @@ def main():
         with socketserver.TCPServer(("", PORT), Handler) as httpd:
             print(f"Server running at http://localhost:{PORT}/")
             print(f"Serving from: {script_dir}")
-            print("\nOpen http://localhost:{PORT}/index.html in your browser")
+            print(f"\nOpen http://localhost:{PORT}/index.html in your browser")
             print("Press Ctrl+C to stop the server\n")
             
             # Try to open browser automatically
             try:
                 webbrowser.open(f'http://localhost:{PORT}/index.html')
-            except:
+            except (OSError, Exception):
+                # Ignore if browser can't be opened
                 pass
             
             httpd.serve_forever()

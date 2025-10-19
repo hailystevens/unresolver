@@ -11,7 +11,7 @@ import os
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import socket
@@ -76,10 +76,11 @@ class LinkChecker:
         
         # Handle absolute vs relative paths
         if url_path.startswith('/'):
-            # Absolute path from web root - need to determine web root
-            # For now, treat as relative to base_path
+            # Absolute path from web root - treat as relative to parent directory
+            # This works for most common scenarios where HTML files are in a subdirectory
             file_path = Path(base_path).parent / url_path.lstrip('/')
         else:
+            # Relative path - resolve relative to the HTML file's directory
             file_path = Path(base_path).parent / url_path
             
         return file_path.exists()
@@ -96,7 +97,7 @@ class LinkChecker:
             result = response.getcode() < 400
             self.checked_urls[url] = result
             return result
-        except (HTTPError, URLError, socket.timeout, Exception):
+        except (HTTPError, URLError, socket.timeout, OSError, ValueError):
             self.checked_urls[url] = False
             return False
     
