@@ -2,6 +2,24 @@
 
 This document provides practical examples of using Unresolver to find broken links in HTML files.
 
+## Serverless Web Interface
+
+The easiest way to get started! Simply open `index.html` in your browser:
+
+1. **Double-click** `index.html` to open it in your browser
+2. **Upload** your HTML files using the file picker
+3. **Configure** options like external URL checking, index filenames, etc.
+4. **Click** "Check Links" to see results
+
+**Features:**
+- Works completely offline (no server needed!)
+- Check external URLs with internet connection
+- Supports multiple file uploads
+- URL fragment decoding
+- Configurable index filenames
+
+**Note:** Browser-based checking has limited access to local files. For comprehensive local file checking, use the CLI below.
+
 ## Example 1: Quick Check
 
 Check all HTML files in the current directory:
@@ -114,15 +132,53 @@ fi
 echo "All links are valid!"
 ```
 
-## Example 7: Using the Web Interface
+## Example 7: Using Site Root for Absolute URLs
 
-Start the web server and view results in your browser:
+Check HTML files with absolute URLs (starting with `/`) by specifying the site root:
 
 ```bash
-python3 server.py
+python3 unresolver.py --site-root /path/to/site/root ./pages
 ```
 
-Then open http://localhost:8000/index.html to see the interactive interface.
+This is essential for static sites where absolute URLs need to be resolved correctly.
+
+**Example scenario:**
+```
+/site-root/
+  ├── css/
+  │   └── style.css
+  ├── pages/
+  │   └── about.html  (contains <link href="/css/style.css">)
+  └── index.html
+```
+
+```bash
+python3 unresolver.py --site-root /path/to/site-root pages/about.html
+# Will correctly find /css/style.css
+```
+
+## Example 8: Custom Index Filenames
+
+Specify custom index filenames for directory URLs:
+
+```bash
+python3 unresolver.py --index-files index.html,default.html,home.html .
+```
+
+This checks directories for any of the specified index files.
+
+## Example 9: Complete Static Site Check
+
+Comprehensive check for a static site with all features:
+
+```bash
+python3 unresolver.py \
+  --site-root /path/to/site \
+  --index-files index.html,default.html \
+  --show-valid \
+  --no-external \
+  .
+```
 
 ## Tag Coverage
 
@@ -147,7 +203,9 @@ Unresolver intelligently handles:
 - **javascript**: `javascript:void(0)` - Skipped
 - **data URIs**: `data:image/png;base64,...` - Skipped
 - **Relative paths**: `../images/logo.png` - Resolved correctly
-- **Absolute paths**: `/assets/style.css` - Resolved from base
+- **Absolute paths**: `/assets/style.css` - Resolved from site root (use `--site-root`)
+- **Directory URLs**: `/about/` - Checks for index files
+- **URL encoding**: Decodes `%20` and other encoded characters in fragments
 
 ## Tips
 

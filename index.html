@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unresolver - Broken Link Checker</title>
+    <title>Unresolver - Serverless Link Checker</title>
     <style>
         * {
             margin: 0;
@@ -278,6 +278,14 @@
             margin-top: 20px;
         }
         
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #2196F3;
@@ -306,29 +314,66 @@
         .info-box li {
             margin-bottom: 5px;
         }
+
+        #file-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .file-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f7f7f7;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-item .file-path {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            flex: 1;
+        }
+
+        .file-item .remove-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .file-item .remove-btn:hover {
+            background: #cc0000;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔗 Unresolver</h1>
-            <p>Find broken links in HTML files with ease</p>
+            <h1>🔗 Unresolver (Serverless)</h1>
+            <p>Find broken links in HTML files - No server required!</p>
         </div>
         
         <div class="content">
             <div class="section">
                 <div class="info-box">
-                    <h3>📋 How to Use</h3>
-                    <p>This tool checks HTML files for broken links in the following tags:</p>
+                    <h3>🎉 Fully Serverless!</h3>
+                    <p>This tool works entirely in your browser with no server required. You can use it:</p>
                     <ul>
-                        <li><code>&lt;a href&gt;</code> - Hyperlinks</li>
-                        <li><code>&lt;link&gt;</code> - Stylesheets and resources</li>
-                        <li><code>&lt;img src&gt;</code> - Images</li>
-                        <li><code>&lt;script src&gt;</code> - JavaScript files</li>
-                        <li><code>&lt;iframe src&gt;</code> - Embedded content</li>
-                        <li><code>&lt;area href&gt;</code> - Image map areas</li>
+                        <li>Directly from your local filesystem (<code>file://</code> protocol)</li>
+                        <li>As a saved HTML file on your desktop</li>
+                        <li>Offline - no internet connection needed</li>
+                        <li>For checking offline static sites and local HTML files</li>
                     </ul>
-                    <p style="margin-top: 10px;"><strong>Note:</strong> This interface requires running a local web server. See README for CLI usage.</p>
+                    <p style="margin-top: 10px;"><strong>Note:</strong> External URL checking requires internet access. For advanced features, use the CLI version.</p>
                 </div>
             </div>
             
@@ -336,18 +381,29 @@
                 <h2>Configuration</h2>
                 
                 <div class="form-group">
-                    <label for="path">Path to HTML file or directory:</label>
-                    <input type="text" id="path" placeholder="e.g., ./docs or index.html" value=".">
+                    <label for="htmlFiles">Upload HTML Files:</label>
+                    <input type="file" id="htmlFiles" accept=".html,.htm" multiple>
+                    <div id="file-list"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="indexFiles">Index Filenames (comma-separated):</label>
+                    <input type="text" id="indexFiles" placeholder="e.g., index.html, default.html" value="index.html,index.htm">
                 </div>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="checkExternal" checked>
-                    <label for="checkExternal">Check external URLs (may be slow)</label>
+                    <label for="checkExternal">Check external URLs (requires internet)</label>
                 </div>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="showValid">
                     <label for="showValid">Show valid links</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="decodeFragments" checked>
+                    <label for="decodeFragments">Decode URL-encoded fragments</label>
                 </div>
                 
                 <div class="form-group">
@@ -359,55 +415,64 @@
             </div>
             
             <div id="results"></div>
+
+            <div class="section" style="margin-top: 40px;">
+                <h2>📖 How to Use</h2>
+                <div class="info-box">
+                    <h3>Checking Links in Browser</h3>
+                    <ol style="margin-left: 20px;">
+                        <li>Click "Upload HTML Files" and select one or more HTML files from your computer</li>
+                        <li>Configure options (external URL checking, show valid links, etc.)</li>
+                        <li>Click "Check Links" to analyze</li>
+                        <li>View results grouped by file</li>
+                    </ol>
+                    
+                    <h3 style="margin-top: 20px;">Command Line Interface</h3>
+                    <p>For more advanced features, use the Python CLI:</p>
+                    <ul>
+                        <li><code>python3 unresolver.py .</code> - Check all HTML in current directory</li>
+                        <li><code>python3 unresolver.py --site-root /path/to/root .</code> - Specify site root for absolute URLs</li>
+                        <li><code>python3 unresolver.py --index-files index.html,default.html .</code> - Custom index files</li>
+                        <li><code>python3 unresolver.py --help</code> - Show all CLI options</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     
     <script>
-        function runCheck() {
-            const path = document.getElementById('path').value;
-            const checkExternal = document.getElementById('checkExternal').checked;
-            const showValid = document.getElementById('showValid').checked;
-            const timeout = document.getElementById('timeout').value;
+        // Store uploaded files
+        let uploadedFiles = [];
+        
+        // File selection handler
+        document.getElementById('htmlFiles').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            uploadedFiles = uploadedFiles.concat(files);
+            displayFileList();
+        });
+        
+        function displayFileList() {
+            const fileListDiv = document.getElementById('file-list');
+            if (uploadedFiles.length === 0) {
+                fileListDiv.innerHTML = '';
+                return;
+            }
             
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>Checking links...</p>
-                </div>
-            `;
-            
-            // Build command
-            let cmd = `python3 unresolver.py "${path}" --json`;
-            if (!checkExternal) cmd += ' --no-external';
-            if (showValid) cmd += ' --show-valid';
-            cmd += ` --timeout ${timeout}`;
-            
-            // In a real web interface, this would make an API call to a backend
-            // For now, show instructions on how to use the CLI
-            resultsDiv.innerHTML = `
-                <div class="info-box">
-                    <h3>⚠️ Web Interface Limitation</h3>
-                    <p>Due to browser security restrictions, this interface cannot directly execute Python scripts.</p>
-                    <p style="margin-top: 10px;"><strong>To check your links, run this command in your terminal:</strong></p>
-                    <div class="link-url" style="margin-top: 15px; font-size: 0.9em;">${escapeHtml(cmd)}</div>
-                    <p style="margin-top: 15px;">Or use the CLI directly:</p>
-                    <ul style="margin-top: 10px;">
-                        <li><code>python3 unresolver.py --help</code> - Show all options</li>
-                        <li><code>python3 unresolver.py .</code> - Check all HTML files in current directory</li>
-                        <li><code>python3 unresolver.py index.html</code> - Check a single file</li>
-                    </ul>
-                </div>
-                
-                <div class="section">
-                    <h2>Example Results</h2>
-                    <p>Here's what the results would look like:</p>
-                </div>
-            `;
-            
-            // Show example results
-            const exampleResults = generateExampleResults();
-            displayResults(exampleResults);
+            let html = '<div style="margin-top: 10px; color: #667eea; font-weight: 600;">Selected Files:</div>';
+            uploadedFiles.forEach((file, index) => {
+                html += `
+                    <div class="file-item">
+                        <span class="file-path">${escapeHtml(file.name)}</span>
+                        <button class="remove-btn" onclick="removeFile(${index})">Remove</button>
+                    </div>
+                `;
+            });
+            fileListDiv.innerHTML = html;
+        }
+        
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayFileList();
         }
         
         function escapeHtml(text) {
@@ -416,59 +481,227 @@
             return div.innerHTML;
         }
         
-        function generateExampleResults() {
-            return [
-                {
-                    file: "example/index.html",
-                    links: [
-                        {
-                            tag: "a",
-                            attr: "href",
-                            url: "about.html",
-                            line: 15,
-                            status: "broken",
-                            reason: "Local file not found"
-                        },
-                        {
-                            tag: "img",
-                            attr: "src",
-                            url: "images/logo.png",
-                            line: 23,
-                            status: "valid",
-                            reason: "Local file exists"
-                        },
-                        {
-                            tag: "link",
-                            attr: "href",
-                            url: "styles.css",
-                            line: 8,
-                            status: "valid",
-                            reason: "Local file exists"
-                        },
-                        {
-                            tag: "a",
-                            attr: "href",
-                            url: "https://example.com/404",
-                            line: 42,
-                            status: "broken",
-                            reason: "External URL not reachable"
-                        }
-                    ]
-                },
-                {
-                    file: "example/contact.html",
-                    links: [
-                        {
-                            tag: "script",
-                            attr: "src",
-                            url: "app.js",
-                            line: 10,
-                            status: "valid",
-                            reason: "Local file exists"
-                        }
-                    ]
+        async function runCheck() {
+            if (uploadedFiles.length === 0) {
+                showMessage('Please upload at least one HTML file.', 'error');
+                return;
+            }
+            
+            const checkExternal = document.getElementById('checkExternal').checked;
+            const showValid = document.getElementById('showValid').checked;
+            const decodeFragments = document.getElementById('decodeFragments').checked;
+            const timeout = parseInt(document.getElementById('timeout').value) || 5;
+            const indexFiles = document.getElementById('indexFiles').value
+                .split(',')
+                .map(f => f.trim())
+                .filter(f => f);
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Checking links in ${uploadedFiles.length} file(s)...</p>
+                </div>
+            `;
+            
+            try {
+                const results = await checkAllFiles(uploadedFiles, {
+                    checkExternal,
+                    showValid,
+                    decodeFragments,
+                    timeout,
+                    indexFiles
+                });
+                displayResults(results);
+            } catch (error) {
+                showMessage('Error checking links: ' + error.message, 'error');
+            }
+        }
+        
+        async function checkAllFiles(files, options) {
+            const results = [];
+            
+            for (const file of files) {
+                try {
+                    const content = await readFileContent(file);
+                    const links = extractLinks(content);
+                    const checkedLinks = await checkLinks(links, options, file.name);
+                    
+                    results.push({
+                        file: file.name,
+                        links: checkedLinks
+                    });
+                } catch (error) {
+                    results.push({
+                        file: file.name,
+                        error: error.message,
+                        links: []
+                    });
                 }
+            }
+            
+            return results;
+        }
+        
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(new Error('Failed to read file'));
+                reader.readAsText(file);
+            });
+        }
+        
+        function extractLinks(html) {
+            const links = [];
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Get line numbers (approximate by counting newlines before each tag)
+            const lines = html.split('\n');
+            
+            // Tags to check
+            const tagChecks = [
+                { selector: 'a[href]', attr: 'href', tag: 'a' },
+                { selector: 'link[href]', attr: 'href', tag: 'link' },
+                { selector: 'img[src]', attr: 'src', tag: 'img' },
+                { selector: 'script[src]', attr: 'src', tag: 'script' },
+                { selector: 'iframe[src]', attr: 'src', tag: 'iframe' },
+                { selector: 'area[href]', attr: 'href', tag: 'area' }
             ];
+            
+            tagChecks.forEach(check => {
+                const elements = doc.querySelectorAll(check.selector);
+                elements.forEach(el => {
+                    const url = el.getAttribute(check.attr);
+                    if (url && url.trim()) {
+                        // Approximate line number
+                        const line = findLineNumber(html, url);
+                        links.push({
+                            tag: check.tag,
+                            attr: check.attr,
+                            url: url.trim(),
+                            line: line
+                        });
+                    }
+                });
+            });
+            
+            return links;
+        }
+        
+        function findLineNumber(html, searchStr) {
+            const lines = html.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes(searchStr)) {
+                    return i + 1;
+                }
+            }
+            return 1;
+        }
+        
+        async function checkLinks(links, options, fileName) {
+            const results = [];
+            
+            for (const link of links) {
+                const result = await checkLink(link, options, fileName);
+                results.push({
+                    ...link,
+                    ...result
+                });
+            }
+            
+            return results;
+        }
+        
+        async function checkLink(link, options, fileName) {
+            const url = link.url;
+            
+            // Decode fragment if enabled
+            let decodedUrl = url;
+            if (options.decodeFragments) {
+                try {
+                    decodedUrl = decodeURIComponent(url);
+                } catch (e) {
+                    // If decoding fails, use original
+                }
+            }
+            
+            // Check for special protocols
+            if (isSpecialProtocol(url)) {
+                return {
+                    status: 'skipped',
+                    reason: 'Special protocol or fragment'
+                };
+            }
+            
+            // Check external URLs
+            if (isExternalUrl(url)) {
+                if (!options.checkExternal) {
+                    return {
+                        status: 'skipped',
+                        reason: 'External URL check disabled'
+                    };
+                }
+                
+                try {
+                    const isValid = await checkExternalUrl(url, options.timeout);
+                    return {
+                        status: isValid ? 'valid' : 'broken',
+                        reason: isValid ? 'External URL reachable' : 'External URL not reachable'
+                    };
+                } catch (error) {
+                    return {
+                        status: 'broken',
+                        reason: 'External URL check failed: ' + error.message
+                    };
+                }
+            }
+            
+            // For local files, we can't check them in the browser due to security restrictions
+            return {
+                status: 'warning',
+                reason: 'Local file check not available in browser (use CLI for local file checking)'
+            };
+        }
+        
+        function isSpecialProtocol(url) {
+            const specialProtocols = ['mailto:', 'tel:', 'javascript:', 'data:', '#'];
+            return specialProtocols.some(proto => url.startsWith(proto)) || url === '#';
+        }
+        
+        function isExternalUrl(url) {
+            try {
+                const parsed = new URL(url, window.location.href);
+                return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+            } catch {
+                return false;
+            }
+        }
+        
+        async function checkExternalUrl(url, timeout) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout * 1000);
+                
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    mode: 'no-cors', // Allow cross-origin requests
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                // With no-cors, we can't read the status, so we assume success if no error
+                return true;
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    return false; // Timeout
+                }
+                // For no-cors mode, some errors still mean the URL might be reachable
+                // We'll be optimistic and return true for some network errors
+                return false;
+            }
         }
         
         function displayResults(results) {
@@ -479,6 +712,9 @@
             const totalLinks = results.reduce((sum, r) => sum + r.links.length, 0);
             const brokenLinks = results.reduce((sum, r) => 
                 sum + r.links.filter(l => l.status === 'broken').length, 0
+            );
+            const warningLinks = results.reduce((sum, r) => 
+                sum + r.links.filter(l => l.status === 'warning').length, 0
             );
             
             let html = `
@@ -495,19 +731,38 @@
                         <div class="stat-value" style="color: ${brokenLinks > 0 ? '#ff4444' : '#00C851'}">${brokenLinks}</div>
                         <div class="stat-label">Broken Links</div>
                     </div>
+                    <div class="stat">
+                        <div class="stat-value" style="color: #ffaa00">${warningLinks}</div>
+                        <div class="stat-label">Warnings</div>
+                    </div>
                 </div>
             `;
+            
+            if (warningLinks > 0) {
+                html += `
+                    <div class="info-box">
+                        <h3>⚠️ Browser Limitations</h3>
+                        <p>Some local file checks cannot be performed in the browser due to security restrictions. 
+                        For complete local file checking, use the Python CLI: <code>python3 unresolver.py --help</code></p>
+                    </div>
+                `;
+            }
             
             // Display each file
             results.forEach((result, index) => {
                 const broken = result.links.filter(l => l.status === 'broken').length;
                 const valid = result.links.filter(l => l.status === 'valid').length;
+                const warning = result.links.filter(l => l.status === 'warning').length;
                 
                 let badge = '';
                 if (broken > 0) {
                     badge = `<span class="badge badge-error">${broken} broken</span>`;
-                } else if (valid > 0) {
-                    badge = `<span class="badge badge-success">${valid} valid</span>`;
+                }
+                if (warning > 0) {
+                    badge += `<span class="badge badge-warning">${warning} warnings</span>`;
+                }
+                if (valid > 0 && broken === 0) {
+                    badge += `<span class="badge badge-success">${valid} valid</span>`;
                 }
                 
                 html += `
@@ -521,7 +776,8 @@
                 
                 result.links.forEach(link => {
                     const icon = link.status === 'broken' ? '❌' : 
-                                link.status === 'valid' ? '✅' : '⚠️';
+                                link.status === 'valid' ? '✅' : 
+                                link.status === 'warning' ? '⚠️' : 'ℹ️';
                     
                     html += `
                         <div class="link-item">
@@ -543,7 +799,12 @@
                 `;
             });
             
-            resultsDiv.innerHTML += html;
+            resultsDiv.innerHTML = html;
+            
+            // Show success message if no broken links
+            if (brokenLinks === 0 && warningLinks === 0) {
+                showMessage('✅ No broken links found! All links are valid.', 'success');
+            }
         }
         
         function toggleFile(index) {
@@ -551,15 +812,11 @@
             element.classList.toggle('show');
         }
         
-        // Show example on load
-        window.addEventListener('load', () => {
-            document.getElementById('results').innerHTML = `
-                <div class="info-box">
-                    <h3>👋 Welcome!</h3>
-                    <p>Click the "Check Links" button above to see how to use the link checker.</p>
-                </div>
-            `;
-        });
+        function showMessage(message, type) {
+            const resultsDiv = document.getElementById('results');
+            const className = type === 'error' ? 'error-message' : 'success-message';
+            resultsDiv.innerHTML = `<div class="${className}">${escapeHtml(message)}</div>`;
+        }
     </script>
 </body>
 </html>

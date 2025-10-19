@@ -53,10 +53,12 @@ class LinkExtractor(HTMLParser):
 class LinkChecker:
     """Check if links are valid."""
     
-    def __init__(self, timeout=5, check_external=True):
+    def __init__(self, timeout=5, check_external=True, site_root=None, index_files=None):
         self.timeout = timeout
         self.check_external = check_external
         self.checked_urls = {}  # Cache for external URLs
+        self.site_root = Path(site_root) if site_root else None
+        self.index_files = index_files or ['index.html', 'index.htm']
         
     def is_external(self, url):
         """Check if URL is external."""
@@ -71,19 +73,41 @@ class LinkChecker:
     
     def check_local_file(self, url, base_path):
         """Check if local file exists."""
-        # Remove query string and fragment
-        url_path = urlparse(url).path
+        # Parse URL and decode fragment
+        parsed = urlparse(url)
+        from urllib.parse import unquote
+        url_path = unquote(parsed.path)
         
         # Handle absolute vs relative paths
         if url_path.startswith('/'):
-            # Absolute path from web root - treat as relative to parent directory
-            # This works for most common scenarios where HTML files are in a subdirectory
-            file_path = Path(base_path).parent / url_path.lstrip('/')
+            # Absolute path from web root
+            if self.site_root:
+                # Use site_root if provided
+                file_path = self.site_root / url_path.lstrip('/')
+            else:
+                # Default behavior: treat as relative to parent directory
+                file_path = Path(base_path).parent / url_path.lstrip('/')
         else:
             # Relative path - resolve relative to the HTML file's directory
             file_path = Path(base_path).parent / url_path
+        
+        # Check if path exists
+        if file_path.exists():
+            return True
+        
+        # If path is a directory, check for index files
+        if file_path.is_dir():
+            for index_file in self.index_files:
+                if (file_path / index_file).exists():
+                    return True
+        
+        # If path doesn't have an extension and doesn't exist, try adding index files
+        if not file_path.suffix and not file_path.exists():
+            for index_file in self.index_files:
+                if (file_path / index_file).exists():
+                    return True
             
-        return file_path.exists()
+        return False
     
     def check_external_url(self, url):
         """Check if external URL is reachable."""
@@ -237,6 +261,7 @@ Examples:
   %(prog)s index.html             # Check a single file
   %(prog)s --no-external .        # Skip external URL checks
   %(prog)s --json . > results.json  # Output as JSON
+  %(prog)s --site-root /path/to/root .  # Specify site root for absolute URLs
         """
     )
     parser.add_argument('path', help='Path to HTML file or directory')
@@ -248,6 +273,10 @@ Examples:
                         help='Show valid links in addition to broken ones')
     parser.add_argument('--json', action='store_true',
                         help='Output results as JSON')
+    parser.add_argument('--site-root', type=str, default=None,
+                        help='Site root directory for resolving absolute URLs (starting with /)')
+    parser.add_argument('--index-files', type=str, default='index.html,index.htm',
+                        help='Comma-separated list of index filenames to check in directories (default: index.html,index.htm)')
     
     args = parser.parse_args()
     
@@ -257,10 +286,15 @@ Examples:
         print(f"No HTML files found in: {args.path}", file=sys.stderr)
         return 1
     
+    # Parse index files
+    index_files = [f.strip() for f in args.index_files.split(',') if f.strip()]
+    
     # Check links
     checker = LinkChecker(
         timeout=args.timeout,
-        check_external=not args.no_external
+        check_external=not args.no_external,
+        site_root=args.site_root,
+        index_files=index_files
     )
     
     results = []
