@@ -9,9 +9,12 @@ A minimal Python script to find broken links in HTML files. Checks `<a href>`, `
 - 🌐 **External URL validation** - Verifies external links are reachable
 - 📁 **Local file validation** - Ensures local resources exist
 - 🎨 **Multiple output formats** - Text and JSON output
-- 🖥️ **Web interface** - Simple HTML interface to view results
+- 🖥️ **Serverless web interface** - Standalone HTML file that works offline
 - ⚡ **Fast** - Caches external URL checks
 - 🎯 **Flexible** - Check single files or entire directories
+- 🌍 **Site root support** - Properly resolve absolute URLs with `--site-root`
+- 📑 **Configurable index files** - Check directories with custom index filenames
+- 🔤 **Fragment decoding** - Decodes URL-encoded fragments for better validation
 
 ## Checked Tags
 
@@ -72,34 +75,57 @@ python3 unresolver.py --json . > results.json
 python3 unresolver.py --timeout 10 .
 ```
 
-### Web Interface
-
-Launch the web server and open the interface in your browser:
-
+**Specify site root for absolute URLs:**
 ```bash
-python3 server.py
+python3 unresolver.py --site-root /path/to/site/root .
 ```
 
-Then open http://localhost:8000/index.html in your browser.
+**Custom index filenames:**
+```bash
+python3 unresolver.py --index-files index.html,default.html,home.html .
+```
 
-**Note:** The web interface provides a visual demonstration and instructions. For actual link checking, use the CLI as shown in the interface.
+### Serverless Web Interface
+
+The web interface is now completely serverless! Simply open `index.html` in any web browser:
+
+1. **Open directly:** Double-click `index.html` to open it in your browser
+2. **Works offline:** No server or internet connection required (except for checking external URLs)
+3. **Upload HTML files:** Use the file upload feature to select HTML files to check
+4. **Get instant results:** See broken links, valid links, and warnings immediately
+
+**Features:**
+- File upload for checking multiple HTML files
+- External URL validation (with internet connection)
+- Configurable index filenames
+- URL fragment decoding
+- No localhost or server required!
+
+**Note:** For checking local file references (relative paths, absolute paths), use the CLI version which has full filesystem access.
+
+**Legacy note:** The `server.py` file is kept for backwards compatibility but is no longer needed for the web interface.
 
 ## Command Line Options
 
 ```
-usage: unresolver.py [-h] [--no-external] [--timeout TIMEOUT] [--show-valid] [--json] path
+usage: unresolver.py [-h] [--no-external] [--timeout TIMEOUT] [--show-valid] [--json] 
+                     [--site-root SITE_ROOT] [--index-files INDEX_FILES] path
 
 Find broken links in HTML files
 
 positional arguments:
-  path               Path to HTML file or directory
+  path                     Path to HTML file or directory
 
 optional arguments:
-  -h, --help         show this help message and exit
-  --no-external      Skip checking external URLs
-  --timeout TIMEOUT  Timeout for external URL checks (seconds, default: 5)
-  --show-valid       Show valid links in addition to broken ones
-  --json             Output results as JSON
+  -h, --help               show this help message and exit
+  --no-external            Skip checking external URLs
+  --timeout TIMEOUT        Timeout for external URL checks (seconds, default: 5)
+  --show-valid             Show valid links in addition to broken ones
+  --json                   Output results as JSON
+  --site-root SITE_ROOT    Site root directory for resolving absolute URLs (starting with /)
+  --index-files INDEX_FILES
+                           Comma-separated list of index filenames to check in directories 
+                           (default: index.html,index.htm)
 ```
 
 ## Examples
@@ -185,7 +211,9 @@ The tool intelligently handles:
 - **Special protocols** (`mailto:`, `tel:`, `javascript:`) - Skipped
 - **Data URIs** (`data:image/png;base64,...`) - Skipped
 - **Relative paths** - Resolved relative to the HTML file location
-- **Absolute paths** - Resolved from the base directory
+- **Absolute paths** - Resolved from site root (use `--site-root` to specify)
+- **Directory URLs** - Automatically checks for index files (`index.html`, `index.htm`, or custom)
+- **URL-encoded fragments** - Decoded properly for accurate validation
 
 ## Requirements
 
