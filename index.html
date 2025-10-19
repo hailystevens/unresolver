@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unresolver - Broken Link Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        #results {
+            margin-top: 30px;
+        }
+        
+        .results-header {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        
+        .stat {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #777;
+            font-size: 0.9em;
+        }
+        
+        .file-result {
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .file-header {
+            background: #f7f7f7;
+            padding: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-header:hover {
+            background: #efefef;
+        }
+        
+        .file-name {
+            flex: 1;
+            word-break: break-all;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+        
+        .badge-error {
+            background: #ff4444;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffaa00;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #00C851;
+            color: white;
+        }
+        
+        .links-list {
+            display: none;
+        }
+        
+        .links-list.show {
+            display: block;
+        }
+        
+        .link-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .link-item:last-child {
+            border-bottom: none;
+        }
+        
+        .link-status {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        
+        .link-details {
+            flex: 1;
+        }
+        
+        .link-url {
+            font-family: 'Courier New', monospace;
+            background: #f7f7f7;
+            padding: 5px 8px;
+            border-radius: 3px;
+            word-break: break-all;
+            margin: 5px 0;
+        }
+        
+        .link-meta {
+            color: #777;
+            font-size: 0.9em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 3px;
+        }
+        
+        .info-box h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+        
+        .info-box code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .info-box li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Unresolver</h1>
+            <p>Find broken links in HTML files with ease</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <div class="info-box">
+                    <h3>📋 How to Use</h3>
+                    <p>This tool checks HTML files for broken links in the following tags:</p>
+                    <ul>
+                        <li><code>&lt;a href&gt;</code> - Hyperlinks</li>
+                        <li><code>&lt;link&gt;</code> - Stylesheets and resources</li>
+                        <li><code>&lt;img src&gt;</code> - Images</li>
+                        <li><code>&lt;script src&gt;</code> - JavaScript files</li>
+                        <li><code>&lt;iframe src&gt;</code> - Embedded content</li>
+                        <li><code>&lt;area href&gt;</code> - Image map areas</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>Note:</strong> This interface requires running a local web server. See README for CLI usage.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Configuration</h2>
+                
+                <div class="form-group">
+                    <label for="path">Path to HTML file or directory:</label>
+                    <input type="text" id="path" placeholder="e.g., ./docs or index.html" value=".">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="checkExternal" checked>
+                    <label for="checkExternal">Check external URLs (may be slow)</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="showValid">
+                    <label for="showValid">Show valid links</label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="timeout">Timeout for external URLs (seconds):</label>
+                    <input type="text" id="timeout" value="5" style="width: 100px;">
+                </div>
+                
+                <button class="button" onclick="runCheck()">🔍 Check Links</button>
+            </div>
+            
+            <div id="results"></div>
+        </div>
+    </div>
+    
+    <script>
+        function runCheck() {
+            const path = document.getElementById('path').value;
+            const checkExternal = document.getElementById('checkExternal').checked;
+            const showValid = document.getElementById('showValid').checked;
+            const timeout = document.getElementById('timeout').value;
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Checking links...</p>
+                </div>
+            `;
+            
+            // Build command
+            let cmd = `python3 unresolver.py "${path}" --json`;
+            if (!checkExternal) cmd += ' --no-external';
+            if (showValid) cmd += ' --show-valid';
+            cmd += ` --timeout ${timeout}`;
+            
+            // In a real web interface, this would make an API call to a backend
+            // For now, show instructions on how to use the CLI
+            resultsDiv.innerHTML = `
+                <div class="info-box">
+                    <h3>⚠️ Web Interface Limitation</h3>
+                    <p>Due to browser security restrictions, this interface cannot directly execute Python scripts.</p>
+                    <p style="margin-top: 10px;"><strong>To check your links, run this command in your terminal:</strong></p>
+                    <div class="link-url" style="margin-top: 15px; font-size: 0.9em;">${escapeHtml(cmd)}</div>
+                    <p style="margin-top: 15px;">Or use the CLI directly:</p>
+                    <ul style="margin-top: 10px;">
+                        <li><code>python3 unresolver.py --help</code> - Show all options</li>
+                        <li><code>python3 unresolver.py .</code> - Check all HTML files in current directory</li>
+                        <li><code>python3 unresolver.py index.html</code> - Check a single file</li>
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h2>Example Results</h2>
+                    <p>Here's what the results would look like:</p>
+                </div>
+            `;
+            
+            // Show example results
+            const exampleResults = generateExampleResults();
+            displayResults(exampleResults);
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function generateExampleResults() {
+            return [
+                {
+                    file: "example/index.html",
+                    links: [
+                        {
+                            tag: "a",
+                            attr: "href",
+                            url: "about.html",
+                            line: 15,
+                            status: "broken",
+                            reason: "Local file not found"
+                        },
+                        {
+                            tag: "img",
+                            attr: "src",
+                            url: "images/logo.png",
+                            line: 23,
+                            status: "valid",
+                            reason: "Local file exists"
+                        },
+                        {
+                            tag: "link",
+                            attr: "href",
+                            url: "styles.css",
+                            line: 8,
+                            status: "valid",
+                            reason: "Local file exists"
+                        },
+                        {
+                            tag: "a",
+                            attr: "href",
+                            url: "https://example.com/404",
+                            line: 42,
+                            status: "broken",
+                            reason: "External URL not reachable"
+                        }
+                    ]
+                },
+                {
+                    file: "example/contact.html",
+                    links: [
+                        {
+                            tag: "script",
+                            attr: "src",
+                            url: "app.js",
+                            line: 10,
+                            status: "valid",
+                            reason: "Local file exists"
+                        }
+                    ]
+                }
+            ];
+        }
+        
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            
+            // Calculate statistics
+            const totalFiles = results.length;
+            const totalLinks = results.reduce((sum, r) => sum + r.links.length, 0);
+            const brokenLinks = results.reduce((sum, r) => 
+                sum + r.links.filter(l => l.status === 'broken').length, 0
+            );
+            
+            let html = `
+                <div class="results-header">
+                    <div class="stat">
+                        <div class="stat-value">${totalFiles}</div>
+                        <div class="stat-label">Files Checked</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${totalLinks}</div>
+                        <div class="stat-label">Total Links</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" style="color: ${brokenLinks > 0 ? '#ff4444' : '#00C851'}">${brokenLinks}</div>
+                        <div class="stat-label">Broken Links</div>
+                    </div>
+                </div>
+            `;
+            
+            // Display each file
+            results.forEach((result, index) => {
+                const broken = result.links.filter(l => l.status === 'broken').length;
+                const valid = result.links.filter(l => l.status === 'valid').length;
+                
+                let badge = '';
+                if (broken > 0) {
+                    badge = `<span class="badge badge-error">${broken} broken</span>`;
+                } else if (valid > 0) {
+                    badge = `<span class="badge badge-success">${valid} valid</span>`;
+                }
+                
+                html += `
+                    <div class="file-result">
+                        <div class="file-header" onclick="toggleFile(${index})">
+                            <span class="file-name">📄 ${escapeHtml(result.file)}</span>
+                            ${badge}
+                        </div>
+                        <div class="links-list" id="file-${index}">
+                `;
+                
+                result.links.forEach(link => {
+                    const icon = link.status === 'broken' ? '❌' : 
+                                link.status === 'valid' ? '✅' : '⚠️';
+                    
+                    html += `
+                        <div class="link-item">
+                            <div class="link-status">${icon}</div>
+                            <div class="link-details">
+                                <div class="link-meta">
+                                    Line ${link.line} • &lt;${link.tag} ${link.attr}&gt;
+                                </div>
+                                <div class="link-url">${escapeHtml(link.url)}</div>
+                                <div class="link-meta">${escapeHtml(link.reason)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML += html;
+        }
+        
+        function toggleFile(index) {
+            const element = document.getElementById(`file-${index}`);
+            element.classList.toggle('show');
+        }
+        
+        // Show example on load
+        window.addEventListener('load', () => {
+            document.getElementById('results').innerHTML = `
+                <div class="info-box">
+                    <h3>👋 Welcome!</h3>
+                    <p>Click the "Check Links" button above to see how to use the link checker.</p>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
