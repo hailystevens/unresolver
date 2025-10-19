@@ -103,6 +103,8 @@ The web interface is now completely serverless! Simply open `index.html` in any 
 
 **Note:** For checking local file references (relative paths, absolute paths), use the CLI version which has full filesystem access.
 
+**Legacy server.py:** The old `server.py` file is still included for backwards compatibility, but is no longer needed. You can safely ignore it or delete it.
+
 ## Command Line Options
 
 ```
