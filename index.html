@@ -14,8 +14,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #e0e0e0;
+            background: #0a0e12;
             min-height: 100vh;
             padding: 20px;
         }
@@ -23,31 +23,37 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            background: #151a20;
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            border: 1px solid #2a3640;
             overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #1a2229;
+            color: #00ffff;
             padding: 30px;
             text-align: center;
+            border-bottom: 2px solid #00ffff;
         }
         
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
         .header p {
             font-size: 1.1em;
-            opacity: 0.9;
+            color: #b0b0b0;
         }
         
         .content {
             padding: 30px;
+            background: #151a20;
         }
         
         .section {
@@ -55,9 +61,14 @@
         }
         
         .section h2 {
-            color: #667eea;
+            color: #00ffff;
             margin-bottom: 15px;
             font-size: 1.5em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #2a3640;
+            padding-bottom: 10px;
         }
         
         .form-group {
@@ -68,22 +79,28 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #555;
+            color: #b0b0b0;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
         }
         
         .form-group input[type="text"],
         .form-group input[type="file"] {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            border: 2px solid #2a3640;
+            border-radius: 2px;
             font-size: 1em;
             transition: border-color 0.3s;
+            background: #0a0e12;
+            color: #e0e0e0;
         }
         
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
         
         .checkbox-group {
@@ -105,28 +122,31 @@
         }
         
         .button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #00ffff;
+            color: #0a0e12;
             padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
+            border: 2px solid #00ffff;
+            border-radius: 2px;
             font-size: 1.1em;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-weight: 600;
+            transition: all 0.2s;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: transparent;
+            color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
         
         .button:active {
-            transform: translateY(0);
+            transform: scale(0.98);
         }
         
         .button:disabled {
-            opacity: 0.6;
+            opacity: 0.4;
             cursor: not-allowed;
         }
         
@@ -135,13 +155,14 @@
         }
         
         .results-header {
-            background: #f7f7f7;
+            background: #1a2229;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 2px;
             margin-bottom: 20px;
             display: flex;
             justify-content: space-around;
             text-align: center;
+            border: 1px solid #2a3640;
         }
         
         .stat {
@@ -151,33 +172,38 @@
         .stat-value {
             font-size: 2em;
             font-weight: bold;
-            color: #667eea;
+            color: #00ffff;
         }
         
         .stat-label {
-            color: #777;
+            color: #808080;
             font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .file-result {
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            border: 2px solid #2a3640;
+            border-radius: 2px;
             margin-bottom: 20px;
             overflow: hidden;
+            background: #0a0e12;
         }
         
         .file-header {
-            background: #f7f7f7;
+            background: #1a2229;
             padding: 15px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #2a3640;
         }
         
         .file-header:hover {
-            background: #efefef;
+            background: #242b34;
+            border-left: 3px solid #00ffff;
         }
         
         .file-name {
@@ -187,24 +213,34 @@
         
         .badge {
             padding: 5px 10px;
-            border-radius: 3px;
+            border-radius: 2px;
             font-size: 0.85em;
             margin-left: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid;
         }
         
         .badge-error {
-            background: #ff4444;
-            color: white;
+            background: #ff0000;
+            color: #ffffff;
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
         }
         
         .badge-warning {
             background: #ffaa00;
-            color: white;
+            color: #0a0e12;
+            border-color: #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
         }
         
         .badge-success {
-            background: #00C851;
-            color: white;
+            background: #00ff00;
+            color: #0a0e12;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
         }
         
         .links-list {
@@ -217,13 +253,18 @@
         
         .link-item {
             padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #2a3640;
             display: flex;
             gap: 15px;
+            background: #0a0e12;
         }
         
         .link-item:last-child {
             border-bottom: none;
+        }
+        
+        .link-item:hover {
+            background: #151a20;
         }
         
         .link-status {
@@ -237,32 +278,35 @@
         
         .link-url {
             font-family: 'Courier New', monospace;
-            background: #f7f7f7;
+            background: #1a2229;
             padding: 5px 8px;
-            border-radius: 3px;
+            border-radius: 2px;
             word-break: break-all;
             margin: 5px 0;
+            color: #00ffff;
+            border: 1px solid #2a3640;
         }
         
         .link-meta {
-            color: #777;
+            color: #808080;
             font-size: 0.9em;
         }
         
         .loading {
             text-align: center;
             padding: 40px;
-            color: #667eea;
+            color: #00ffff;
         }
         
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 4px solid #2a3640;
+            border-top: 4px solid #00ffff;
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
         
         @keyframes spin {
@@ -271,39 +315,48 @@
         }
         
         .error-message {
-            background: #ffebee;
-            color: #c62828;
+            background: #1a0000;
+            color: #ff4444;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 2px;
             margin-top: 20px;
+            border: 2px solid #ff0000;
+            border-left: 4px solid #ff0000;
         }
         
         .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #001a00;
+            color: #00ff00;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 2px;
             margin-top: 20px;
+            border: 2px solid #00ff00;
+            border-left: 4px solid #00ff00;
         }
         
         .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
+            background: #1a2229;
+            border-left: 4px solid #00ffff;
             padding: 15px;
             margin-bottom: 20px;
-            border-radius: 3px;
+            border-radius: 2px;
+            border: 1px solid #2a3640;
         }
         
         .info-box h3 {
-            color: #1976D2;
+            color: #00ffff;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .info-box code {
-            background: white;
+            background: #0a0e12;
             padding: 2px 6px;
-            border-radius: 3px;
+            border-radius: 2px;
             font-family: 'Courier New', monospace;
+            color: #00ff00;
+            border: 1px solid #2a3640;
         }
         
         .info-box ul {
@@ -318,40 +371,47 @@
         #file-list {
             max-height: 300px;
             overflow-y: auto;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            border: 2px solid #2a3640;
+            border-radius: 2px;
             padding: 10px;
             margin-top: 10px;
+            background: #0a0e12;
         }
 
         .file-item {
             padding: 8px;
             margin: 5px 0;
-            background: #f7f7f7;
-            border-radius: 3px;
+            background: #1a2229;
+            border-radius: 2px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid #2a3640;
         }
 
         .file-item .file-path {
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
             flex: 1;
+            color: #b0b0b0;
         }
 
         .file-item .remove-btn {
-            background: #ff4444;
+            background: #ff0000;
             color: white;
-            border: none;
+            border: 1px solid #ff0000;
             padding: 5px 10px;
-            border-radius: 3px;
+            border-radius: 2px;
             cursor: pointer;
             font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .file-item .remove-btn:hover {
-            background: #cc0000;
+            background: transparent;
+            color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -458,7 +518,7 @@
                 return;
             }
             
-            let html = '<div style="margin-top: 10px; color: #667eea; font-weight: 600;">Selected Files:</div>';
+            let html = '<div style="margin-top: 10px; color: #00ffff; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Selected Files:</div>';
             uploadedFiles.forEach((file, index) => {
                 html += `
                     <div class="file-item">
@@ -728,7 +788,7 @@
                         <div class="stat-label">Total Links</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value" style="color: ${brokenLinks > 0 ? '#ff4444' : '#00C851'}">${brokenLinks}</div>
+                        <div class="stat-value" style="color: ${brokenLinks > 0 ? '#ff0000' : '#00ff00'}">${brokenLinks}</div>
                         <div class="stat-label">Broken Links</div>
                     </div>
                     <div class="stat">
